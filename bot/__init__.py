@@ -1,18 +1,23 @@
-import telepot
 import time
+from telegram.ext import Updater, MessageHandler, Filters
+
+def echo(bot, update):
+    print("{}: {}".format(
+        update.message.from_user.name,
+        update.message.text)
+        )
+
+def echo_photo(bot, update):
+    print("{} sent a photo".format(update.message.from_user.name))
 
 
-def create_bot(token, msg_handle=None):
-    bot = telepot.Bot(token)
-    if not msg_handle:
-        from .msg_handle import default_msg_handle
-        msg_handle = default_msg_handle
-    return bot
+def init_updater(config):
+    updater = Updater(token=config.BOT_TOKEN)
 
+    echo_handler = MessageHandler(Filters.text, echo)
+    updater.dispatcher.add_handler(echo_handler)
 
-class Global(object):
-    bot = None
-    archiever = None
+    photo_handler = MessageHandler(Filters.photo, echo_photo)
+    updater.dispatcher.add_handler(photo_handler)
 
-    db_engine = None
-    db_Session = None
+    return updater
