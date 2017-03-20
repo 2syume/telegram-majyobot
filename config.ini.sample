@@ -1,0 +1,12 @@
+[Bot]
+Token = your token here
+
+[Database]
+DatabaseUrl = sqlite:///bot.db
+
+[GoogleCloud]
+CredentialPath = your google cloud credential file
+
+[SavePhotoHandler]
+BasePath = ~//bot/photots
+CloudBucket = photos

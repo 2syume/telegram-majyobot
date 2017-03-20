@@ -87,3 +87,8 @@ ENV/
 
 # Rope project settings
 .ropeproject
+bot.db
+config.ini
+gcs-cred.json
+lab.py
+settings.json

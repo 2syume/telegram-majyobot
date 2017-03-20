@@ -1,8 +1,9 @@
 from sqlalchemy import create_engine
 
 from bot.models import Base
-from config import Config
+from bot.config import config
 
 if __name__ == "__main__":
-    engine = create_engine(Config.DATABASE_CONNECTION)
+    db_connstr = config.get('Database', 'DatabaseUrl')
+    engine = create_engine(db_connstr)
     Base.metadata.create_all(engine)
