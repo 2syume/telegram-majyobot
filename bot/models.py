@@ -6,6 +6,7 @@ from traceback import print_exc
 from sqlalchemy.ext.declarative import declarative_base, DeferredReflection
 import sys
 from contextlib import contextmanager
+import arrow
 
 from .config import config
 
@@ -33,6 +34,8 @@ def session_scope():
         raise
     finally:
         session.close()
+
+# Telegram Related Tables
 
 class User(Base):
     __tablename__ = "user"
@@ -202,4 +205,66 @@ def save_photo_record(message, photosize, photo_filename, photo_uuid, photo_url)
         dbsession.add(photo)
 
 
+# Link Provider
+
+class UrlLink(Base):
+    __tablename__ = "urllink"
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String)
+    url = Column(String, unique=True, nullable=False)
+
+    def __init__(self, url, **kwargs):
+        self.url = url
+        self.title = kwargs.get("title", None)
     
+
+# Updates Checks
+
+class BilibiliTrackRule(Base):
+    __tablename__ = "bilibili_track_rule"
+
+    id = Column(Integer, primary_key=True)
+    telegram_user_id = Column(Integer, ForeignKey(User.id), nullable=False)
+    bilibili_user_id = Column(String, nullable=False)
+    title_match_pattern = Column(String)
+    is_deleted = Column(Boolean, nullable=False, default=False)
+
+
+    def __init__(self, telegram_user_id, bilibili_user_id, **kwargs):
+        self.telegram_user_id = telegram_user_id
+        self.bilibili_user_id = str(telegram_user_id)
+        self.title_match_pattern = kwargs.get("title_match_pattern", None)
+        self.is_deleted = kwargs.get("is_deleted", False)
+
+
+class BilibiliUpdate(Base):
+    __tablename__ = "bilibili_update"
+
+    id = Column(Integer, primary_key=True)
+    telegram_user_id = Column(Integer, ForeignKey(User.id))
+    url_link_id = Column(Integer, ForeignKey(UrlLink.id))
+    read = Column(Boolean, nullable=False, default=False)
+    time_created = Column(DateTime, nullable=False)
+
+    def __init__(self, rule_id, url_link_id, **kwargs):
+        self.rule_id = rule_id
+        self.url_link_id = url_link_id
+        self.read = kwargs.get("read", False)
+        self.time_created = arrow.Arrow.now().datetime
+
+
+def save_bilibili_track_rule(telegram_user_id, bilibili_user_id, title_match_pattern=None):
+    pass
+
+
+def save_bilibili_updates(rule_id, url_link_id):
+    pass
+
+
+def mark_bilibili_updates_as_read(telegram_user_id, url):
+    pass
+
+
+def disable_bilibili_track_rule(rule_id):
+    pass

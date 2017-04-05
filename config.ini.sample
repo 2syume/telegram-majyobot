@@ -8,5 +8,5 @@ DatabaseUrl = sqlite:///bot.db
 CredentialPath = your google cloud credential file
 
 [SavePhotoHandler]
-BasePath = ~//bot/photots
+BasePath = ~/bot/photots
 CloudBucket = photos
